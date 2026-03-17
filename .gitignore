@@ -1,4 +1,5 @@
 .env
+config/openclaw.json
 config/credentials/
 config/agents/
 config/media/

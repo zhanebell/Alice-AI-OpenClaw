@@ -46,9 +46,9 @@
       "enabled": true,
       "httpUrl": "http://signal-cli:8080",
       "autoStart": false,
-      "account": "+15012371791",
+      "account": "+YOUR_SIGNAL_NUMBER",
       "dmPolicy": "pairing",
-      "allowFrom": ["+18084515342"],
+      "allowFrom": ["+YOUR_PERSONAL_NUMBER"],
       "groupPolicy": "disabled",
       "sendReadReceipts": true,
       "mediaMaxMb": 8,
@@ -67,11 +67,10 @@
     },
     "auth": {
       "mode": "token",
-      "token": "__REDACTED_TOKEN__"
+      "token": "__SET_VIA_OPENCLAW_GATEWAY_TOKEN_ENV_VAR__"
     }
   },
   "meta": {
-    "lastTouchedVersion": "2026.3.13",
-    "lastTouchedAt": "2026-03-17T21:16:31.625Z"
+    "lastTouchedVersion": "2026.3.13"
   }
 }

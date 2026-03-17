@@ -63,7 +63,8 @@ Ollama container (:11434) / OpenRouter cloud
 | File | Purpose |
 |------|---------|
 | `docker-compose.yml` | All 4 services (gateway, signal-cli, cli, ollama) |
-| `config/openclaw.json` | Agent config, model settings, Signal channel config |
+| `config/openclaw.json` | Agent config, model settings, Signal channel config — **gitignored** |
+| `config/openclaw.json.example` | Template for `openclaw.json` (copy and fill in your values) |
 | `.env` | Secrets (API keys, gateway token) — **gitignored** |
 | `.env.example` | Template for `.env` |
 | `workspace/SOUL.md` | Alice's personality definition |
