@@ -1,0 +1,14 @@
+.env
+config/credentials/
+config/agents/
+config/media/
+config/logs/
+config/cron/
+config/canvas/
+config/identity/
+config/devices/
+config/memory/
+config/openclaw.json.bak
+config/openclaw.json.bak.*
+config/update-check.json
+workspace/.openclaw/

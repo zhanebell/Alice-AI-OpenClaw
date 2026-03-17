@@ -1,0 +1,83 @@
+services:
+  # ─── OpenClaw Gateway (Alice) ───
+  openclaw-gateway:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: alice-gateway
+    restart: unless-stopped
+    ports:
+      - "18789:18789"
+    volumes:
+      - ./config:/home/node/.openclaw
+      - ./workspace:/home/node/.openclaw/workspace
+    environment:
+      - OPENCLAW_GATEWAY_BIND=lan
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY:-ollama-local}
+      - OLLAMA_HOST=http://ollama:11434
+      - OPENCLAW_TZ=${TZ:-America/New_York}
+    depends_on:
+      ollama:
+        condition: service_started
+      signal-cli:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:18789/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ─── signal-cli native daemon (JSON-RPC + SSE) ───
+  signal-cli:
+    image: bbernhard/signal-cli-rest-api:latest
+    container_name: alice-signal-cli
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    entrypoint: ["signal-cli", "--config", "/home/.local/share/signal-cli", "daemon", "--http", "0.0.0.0:8080", "--receive-mode", "on-connection", "--send-read-receipts"]
+    user: "1000:1000"
+    volumes:
+      - signal-data:/home/.local/share/signal-cli
+
+  # ─── CLI helper (shares gateway network) ───
+  openclaw-cli:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: alice-cli
+    network_mode: "service:openclaw-gateway"
+    volumes:
+      - ./config:/home/node/.openclaw
+      - ./workspace:/home/node/.openclaw/workspace
+    environment:
+      - OPENCLAW_GATEWAY_BIND=lan
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY:-ollama-local}
+      - OLLAMA_HOST=http://ollama:11434
+    profiles:
+      - cli
+    entrypoint: ["node", "dist/index.js"]
+
+  # ─── Ollama (local model server) ───
+  ollama:
+    image: ollama/ollama:latest
+    container_name: alice-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    # Uncomment for NVIDIA GPU:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+volumes:
+  ollama-models:
+    name: alice-ollama-models
+  signal-data:
+    name: alice-signal-data
